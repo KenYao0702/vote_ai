@@ -1,7 +1,11 @@
 <template>
   <div id="app">
     <header class="app-header">
-      <h1>基於 AI 與區塊鏈的未來投票系統</h1>
+      <h1>投票網站</h1>
+      <nav>
+        <a v-if="!userStore.isLoggedIn" :href="backendAuthUrl" class="login-button">Login with Google</a>
+        <button v-else @click="logout" class="logout-button">Logout</button>
+      </nav>
     </header>
     <main>
       <router-view />
@@ -11,18 +15,30 @@
 
 <script>
 import { useCandidatesStore } from './store/candidates';
+import { useUserStore } from './store/user';
 import { onMounted } from 'vue';
+import { computed } from 'vue';
 
 export default {
   name: 'App',
   setup() {
     const candidatesStore = useCandidatesStore();
+    const userStore = useUserStore();
 
-    // When the app component is mounted, initialize the store from localStorage
-    // and set up the cross-tab listener.
     onMounted(() => {
       candidatesStore.initializeFromStorage();
+      userStore.initializeFromStorage();
     });
+
+    const logout = () => {
+      userStore.clearUser();
+    };
+
+    return {
+      userStore: computed(() => userStore),
+      backendAuthUrl: 'http://localhost:3000/auth/google',
+      logout
+    };
   }
 };
 </script>
@@ -49,6 +65,42 @@ body {
 .app-header h1 {
   margin: 0;
   font-size: 1.8em;
+}
+
+.app-header nav {
+  margin-top: 10px;
+}
+
+.login-button {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #007bff;
+  padding: 8px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+  background-color: #e0e0e0;
+}
+
+.logout-button {
+  display: inline-block;
+  background-color: #dc3545; /* A red color for logout */
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c82333; /* A darker red on hover */
 }
 
 main {

@@ -1,0 +1,6 @@
+
+> server@1.0.0 start
+> node index.js
+
+[dotenv@17.2.1] injecting env (3) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+Server is running on port 3000

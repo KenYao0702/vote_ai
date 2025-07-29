@@ -3,6 +3,8 @@ import HomePage from '../views/HomePage.vue';
 import UploadPage from '../views/UploadPage.vue';
 import ResultPage from '../views/ResultPage.vue';
 
+import AuthCallback from '../views/AuthCallback.vue'; // 導入 AuthCallback 組件
+
 const routes = [
   {
     path: '/',
@@ -18,6 +20,11 @@ const routes = [
     path: '/result',
     name: 'Result',
     component: ResultPage
+  },
+  {
+    path: '/auth/callback', // 新增的路由
+    name: 'AuthCallback',
+    component: AuthCallback
   }
 ];
 
