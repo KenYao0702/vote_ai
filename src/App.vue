@@ -26,7 +26,7 @@ export default {
     const userStore = useUserStore();
 
     onMounted(() => {
-      candidatesStore.initializeFromStorage();
+      candidatesStore.fetchCandidates(); // 從後端獲取候選人數據
       userStore.initializeFromStorage();
     });
 
@@ -36,7 +36,7 @@ export default {
 
     return {
       userStore: computed(() => userStore),
-      backendAuthUrl: 'http://localhost:3000/auth/google',
+      backendAuthUrl: 'http://localhost:3000/auth/google', // 後端認證URL
       logout
     };
   }

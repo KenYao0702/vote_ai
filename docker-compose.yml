@@ -14,14 +14,8 @@ services:
       - ./server:/usr/src/app
       # 排除 node_modules 目錄，讓容器使用自己安裝的依賴，避免作業系統衝突
       - /usr/src/app/node_modules
-    environment:
-      # 這裡可以集中管理後端需要的環境變數
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - REDIRECT_URI=${REDIRECT_URI}
-      - FRONTEND_URL=${FRONTEND_URL}
     env_file:
-      - ./server/.env # 從 .env 檔案讀取環境變數
+      - ./.env # 從專案根目錄的 .env 檔案讀取環境變數
 
   # 前端服務 (Frontend Service)
   frontend:
@@ -37,3 +31,6 @@ services:
       - /app/node_modules
     depends_on:
       - backend # 確保後端服務會比前端服務先啟動
+
+volumes:
+  db_data:

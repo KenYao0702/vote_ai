@@ -1,0 +1,19 @@
+{
+  "candidates": [
+    {
+      "id": "candidate1",
+      "name": "候選人 A",
+      "votes": 3
+    },
+    {
+      "id": "candidate2",
+      "name": "候選人 B",
+      "votes": 3
+    },
+    {
+      "id": "candidate3",
+      "name": "候選人 C",
+      "votes": 1
+    }
+  ]
+}
