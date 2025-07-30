@@ -119,11 +119,54 @@
 
     **1. 環境準備 (只需做一次):**
     *   確保你的電腦已安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop/) 並已在背景執行。
-    *   使用 Git `clone` 專案到你的本地電腦。
+    *   使用 Git `clone` 專案到你的本地電腦。**請使用以下指令，並將 `<你的專案GitHub-URL>` 替換為實際的倉庫網址：`https://github.com/KenYao0702/vote_ai.git`**
         ```bash
-        git clone <你的專案GitHub-URL>
+        git clone https://github.com/KenYao0702/vote_ai.git
         cd vote_ai
         ```
+    *   **設定環境變數 (.env 檔案):**
+        *   專案中包含一個 `.env.example` 檔案，它列出了所有必要的環境變數。
+        *   **請複製 `vote_ai/.env.example` 檔案，並將副本重新命名為 `vote_ai/.env`。**
+        *   然後，請向專案負責人索取 `GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET` 的真實值，並填入你的 `vote_ai/.env` 檔案中。**這個 `.env` 檔案不應該被提交到 Git 倉庫。**
+    *   **設定 Git 換行符 (Windows 用戶尤其重要):**
+        *   為了避免跨平台換行符問題，請在專案根目錄 (`vote_ai/`) 下執行以下命令，確保 Git 正確處理換行符：
+            ```bash
+            git rm --cached -r .
+            git reset --hard HEAD
+            ```
+
+    *   **設定區塊鏈環境 (Ganache & 智能合約部署):**
+        *   **安裝 Ganache CLI:** 如果尚未安裝，請全域安裝 Ganache CLI。
+            ```bash
+            npm install -g ganache-cli
+            ```
+        *   **啟動 Ganache CLI:** 在一個獨立的終端機視窗中，啟動 Ganache。請確保它運行在 `8545` 埠。
+            ```bash
+            ganache-cli -p 8545
+            ```
+            *   **注意：** 保持此終端機視窗開啟，Ganache 服務將持續運行。
+        *   **編譯與部署智能合約:**
+            *   進入 `server` 目錄：
+                ```bash
+                cd server
+                ```
+            *   安裝 Hardhat 依賴 (如果尚未安裝):
+                ```bash
+                npm install
+                ```
+            *   編譯智能合約：
+                ```bash
+                npx hardhat compile
+                ```
+            *   部署智能合約到 Ganache：
+                ```bash
+                npx hardhat run scripts/deploy.js --network ganache
+                ```
+            *   部署成功後，你會在終端機中看到合約地址。請確保 `server/index.js` 中的合約地址與此一致。
+            *   完成後，返回專案根目錄：
+                ```bash
+                cd ..
+                ```
 
     **2. 啟動專案 (日常開發使用):**
     *   在專案的根目錄 (`vote_ai/`) 下，執行以下指令來建置並啟動所有服務：
@@ -153,17 +196,18 @@
 
 *   **目標：** 確保 `main` 分支永遠是穩定且可部署的，所有新功能都在獨立的分支上開發。
 
-*   **關於 `.gitignore`:**
+*   **關於 `.gitignore` 和 `.env.example`:**
     *   `.gitignore` 是一個非常重要的檔案，它告訴 Git 哪些檔案或目錄應該被忽略，不應該被版本控制。
     *   **為什麼需要它？** 專案中通常會包含一些不應該被提交到 Git 倉庫的檔案，例如：
-        *   **敏感資訊：** 像是 API 金鑰、資料庫密碼等，通常儲存在 `.env` 檔案中。這些資訊一旦上傳到公共倉庫，會造成嚴重的安全風險。
+        *   **敏感資訊：** 像是 API 金鑰、資料庫密碼等，通常儲存在 `.env` 檔案中。這些資訊一旦上傳到公共倉庫，會造成嚴重的安全風險。因此，`.env` 檔案已被加入 `.gitignore`。
         *   **自動生成檔案：** 例如 `node_modules` (安裝的依賴套件)、編譯後的輸出檔案 (`dist` 目錄)。這些檔案通常很大，且可以透過指令重新生成，不需要納入版本控制。
         *   **個人設定：** IDE 的設定檔、日誌檔等，這些是個人開發環境的配置，不應影響團隊成員。
     *   **如何使用？** 在 `.gitignore` 檔案中，每一行代表一個要忽略的模式（檔案名、目錄名或萬用字元模式）。例如，我們在專案根目錄的 `.gitignore` 中加入了 `.env` 和 `node_modules`，確保這些檔案不會被意外提交。
+    *   **`.env.example` 的作用：** 為了讓所有組員知道專案需要哪些環境變數，我們提供了 `.env.example` 檔案。這個檔案會被提交到 Git 倉庫，組員可以複製它並重新命名為 `.env`，然後填入自己的敏感資訊。
 
 *   **流程：**
 
-    **1. 更新本地 `main` 分支:** 在開始新功能前，永遠先確保你的 `main` 分支是最新版本。
+    **1. 更新本地 `main` 分支 (下載最新程式碼):** 在開始新功能前，永遠先確保你的 `main` 分支是最新版本。
         *   **指令：**
             ```bash
             git checkout main
@@ -171,7 +215,7 @@
             ```
         *   **說明：**
             *   `git checkout main`: 切換到本地的 `main` 分支。
-            *   `git pull origin main`: 從名為 `origin` 的遠端倉庫（通常是你的 GitHub 倉庫）的 `main` 分支拉取最新的變更，並合併到你當前的本地 `main` 分支。這確保你的本地 `main` 分支與遠端倉庫保持同步。
+            *   `git pull origin main`: 從名為 `origin` 的遠端倉庫（即 `https://github.com/KenYao0702/vote_ai.git`）的 `main` 分支拉取最新的變更，並合併到你當前的本地 `main` 分支。這確保你的本地 `main` 分支與遠端倉庫保持同步。
 
     **2. 從 `main` 建立分支 (Branch):**
         *   當要開發新功能或修復 bug 時，永遠從最新的 `main` 分支建立一個新的、有意義命名的分支 (e.g., `feature/backend-api`, `fix/login-bug`)。
@@ -200,7 +244,7 @@
             *   `git add`: 將你修改或新增的檔案添加到 Git 的「暫存區」。只有在暫存區的檔案才會被 `git commit` 記錄。
             *   `git commit -m "<message>"`: 將暫存區的變更永久記錄到本地倉庫的歷史中。`-m` 後面是本次提交的簡短描述，請務必寫得清晰明瞭。
 
-    **4. 發起拉取請求 (Pull Request):**
+    **4. 推送分支到 GitHub (上傳程式碼):**
         *   當分支上的功能開發完成後，將該分支 `push` 到 GitHub。
         *   **指令：**
             ```bash
@@ -211,7 +255,7 @@
             git push origin <branch-name>
             ```
         *   **說明：**
-            *   `git push origin <branch-name>`: 將你本地 `<branch-name>` 分支上的所有提交推送到名為 `origin` 的遠端倉庫（你的 GitHub 倉庫）的同名分支上。這會讓你的變更在 GitHub 上可見。
+            *   `git push origin <branch-name>`: 將你本地 `<branch-name>` 分支上的所有提交推送到名為 `origin` 的遠端倉庫（即 `https://github.com/KenYao0702/vote_ai.git`）的同名分支上。這會讓你的變更在 GitHub 上可見。
             *   `-u` 參數 (或 `--set-upstream`) 只在第一次推送新分支時使用，它會將本地分支與遠端分支建立連結，這樣以後你就可以直接使用 `git push` 而無需指定 `origin <branch-name>`。
         *   在 GitHub 專案頁面上，針對你的分支發起一個 Pull Request (PR) 到 `main` 分支。在 PR 的描述中，清楚說明你做了什麼。
 
