@@ -142,7 +142,7 @@
             ```
         *   **啟動 Ganache CLI:** 在一個獨立的終端機視窗中，啟動 Ganache。請確保它運行在 `8545` 埠。
             ```bash
-            ganache-cli -p 8545
+            ganache-cli -p 8545 -m "test test test test test test test test test test test test"
             ```
             *   **注意：** 保持此終端機視窗開啟，Ganache 服務將持續運行。
         *   **編譯與部署智能合約:**
