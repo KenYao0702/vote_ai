@@ -146,9 +146,9 @@
             ```
             *   **注意：** 保持此終端機視窗開啟，Ganache 服務將持續運行。
         *   **編譯與部署智能合約:**
-            *   進入 `server` 目錄：
+            *   進入 `blockchain` 目錄：
                 ```bash
-                cd server
+                cd blockchain
                 ```
             *   安裝 Hardhat 依賴 (如果尚未安裝):
                 ```bash
