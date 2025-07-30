@@ -162,7 +162,7 @@
                 ```bash
                 npx hardhat run scripts/deploy.js --network ganache
                 ```
-            *   部署成功後，你會在終端機中看到合約地址。請確保 `server/index.js` 中的合約地址與此一致。
+            *   部署成功後，你會在終端機中看到合約地址。**請將部署成功後輸出的合約地址，以及 Ganache 啟動時顯示的第一個帳戶私鑰，更新到自己本地的 `server/index.js` 檔案中。** 這是確保後端能正確與本地區塊鏈互動的關鍵步驟。
             *   完成後，返回專案根目錄：
                 ```bash
                 cd ..
@@ -330,3 +330,53 @@
         1.  仔細檢查錯誤訊息中提到的檔案和行號。
         2.  修正語法錯誤，例如在 `src/App.vue` 的 `return` 語句中，`backendAuthUrl` 後面缺少逗號。
         3.  重新建置並啟動服務：`docker-compose up --build -d`。
+
+---
+
+## 7. 最新配置更新說明
+
+為了優化團隊協作體驗並解決跨平台問題，我們對專案配置進行了以下重要更新：
+
+### 7.1 環境變數管理 (`.env` 與 `.env.example`)
+
+*   **問題：** 敏感資訊（如 API 金鑰）不應直接提交到 Git 倉庫，但團隊成員需要這些配置才能運行專案。
+*   **解決方案：**
+    *   引入 `.env.example` 檔案，它包含了所有必要的環境變數名稱，但值為空或範例值。這個檔案會被提交到 Git。
+    *   `.env` 檔案（包含實際敏感值）已被加入 `.gitignore`，確保其不會被意外提交。
+*   **組員操作：**
+    1.  複製 `.env.example` 並重新命名為 `.env`。
+    2.  向專案負責人索取實際的 `GOOGLE_CLIENT_ID` 和 `GOOGLE_CLIENT_SECRET` 值，並填入自己的 `.env` 檔案中。
+
+### 7.2 跨平台換行符問題 (`.gitattributes`)
+
+*   **問題：** Windows 和 macOS/Linux 使用不同的換行符，導致 Docker 執行腳本時可能出現錯誤。
+*   **解決方案：**
+    *   引入 `.gitattributes` 檔案，強制 Git 在所有平台上使用統一的 `LF` (Unix-style) 換行符。
+*   **組員操作：**
+    1.  在 `git clone` 或 `git pull` 後，在專案根目錄執行以下命令，以確保 Git 正確處理換行符：
+        ```bash
+        git rm --cached -r .
+        git reset --hard HEAD
+        ```
+
+### 7.3 區塊鏈環境配置 (`Ganache` & 智能合約)
+
+*   **問題：** 不同的 Ganache 實例會生成不同的帳戶和私鑰，導致部署的智能合約地址不一致，後端無法正確連接。
+*   **解決方案：**
+    *   **Ganache 啟動：** 統一使用固定的助記詞啟動 Ganache，確保所有組員的 Ganache 實例生成相同的帳戶和私鑰。
+        ```bash
+        ganache-cli -p 8545 -m "test test test test test test test test test test test test"
+        ```
+    *   **Hardhat 配置：** `blockchain/hardhat.config.js` 中的 `ganache` 網路配置已更新，使用與固定助記詞對應的第一個帳戶私鑰。
+    *   **後端連接：** `server/index.js` 中的智能合約地址和用於簽名的私鑰已更新為最新部署的合約地址和對應的私鑰。
+*   **組員操作：**
+    1.  **務必**使用上述帶有助記詞的命令啟動 Ganache。
+    2.  **部署智能合約後，請將部署成功後輸出的合約地址，以及 Ganache 啟動時顯示的第一個帳戶私鑰，更新到自己本地的 `server/index.js` 檔案中。** 這是確保後端能正確與本地區塊鏈互動的關鍵步驟。
+
+### 7.4 Node.js 版本建議
+
+*   **問題：** Hardhat 對 Node.js 版本有特定要求，使用不支援的版本可能導致部署失敗。
+*   **解決方案：** 建議使用 Hardhat 支援的 Node.js LTS 版本（例如 Node.js 18.x 或 20.x）。
+*   **組員操作：**
+    1.  如果遇到 Node.js 版本警告，請使用 `nvm` (Node Version Manager) 切換到推薦的 LTS 版本。
+    2.  切換版本後，在 `blockchain` 目錄下重新執行 `npm install`.

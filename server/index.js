@@ -47,7 +47,7 @@ initializeDb();
 app.locals.db = db;
 
 // --- Blockchain Integration ---
-const contractAddress = "0xb16C97dDb326E29984E264e3849B07fbE618d7B7"; // 替換為你部署的合約地址
+const contractAddress = "0xEDCc313D744Ec61C24BA421F8996357fA4C489E8"; // 替換為你部署的合約地址
 const contractABI = [
   // 這裡只包含我們需要用到的 ABI，例如 vote 函數
   "function vote(uint256 _candidateId) public",
@@ -59,7 +59,7 @@ const provider = new ethers.JsonRpcProvider("http://host.docker.internal:8545");
 
 // 設定 signer (用於發送交易，需要私鑰)
 // 警告：在生產環境中切勿硬編碼私鑰！
-const privateKey = "0x5e60affb5e72b860ed8a9600cc4922f002f49bb8e5a87c4cee478fd530a843e8"; // 替換為你的 Ganache 帳戶私鑰
+const privateKey = "0xc79759ba8a6f2338eb8d70f2d5fb06c20fd4005ad6c78c207368b122fce9ac87"; // 替換為你的 Ganache 帳戶私鑰
 const signer = new ethers.Wallet(privateKey, provider);
 
 // 建立合約實例
