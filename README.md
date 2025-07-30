@@ -163,6 +163,7 @@
                 npx hardhat run scripts/deploy.js --network ganache
                 ```
             *   部署成功後，你會在終端機中看到合約地址。**請將部署成功後輸出的合約地址，以及 Ganache 啟動時顯示的第一個帳戶私鑰，更新到自己本地的 `server/index.js` 檔案中。** 這是確保後端能正確與本地區塊鏈互動的關鍵步驟。
+            *   **同時，請確保 `blockchain/hardhat.config.js` 中的 `networks.ganache.accounts` 陣列也更新為 Ganache 啟動時顯示的第一個帳戶私鑰。**
             *   完成後，返回專案根目錄：
                 ```bash
                 cd ..
