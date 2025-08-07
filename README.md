@@ -74,6 +74,79 @@
 *   **前端 (Frontend):** `http://localhost:8080`
 *   **後端 (Backend):** `http://localhost:3000`
 
+## 開發指南
+
+本節說明如何啟動專案進行開發，以及在哪裡修改程式碼以新增功能。
+
+### 專案啟動
+
+#### 前端
+
+1. **進入專案根目錄**
+2. **安裝依賴**
+   ```bash
+   npm install
+   ```
+3. **啟動開發伺服器**
+   ```bash
+   npm run serve
+   ```
+   服務將運行在 `http://localhost:8080`。
+
+#### 後端
+
+1. **進入後端資料夾**
+   ```bash
+   cd server
+   ```
+2. **安裝依賴**
+   ```bash
+   npm install
+   ```
+3. **啟動後端伺服器**
+   ```bash
+   npm run start
+   ```
+   服務將運行在 `http://localhost:3000`。
+
+---
+
+### 程式碼修改指南
+
+#### 前端 (Frontend) - `vote_ai/src/`
+
+所有前端相關的程式碼都在 `src` 資料夾中。
+
+*   **新增/修改頁面:**
+    *   **`src/views/`**: 存放應用程式的主要頁面元件 (例如 `HomeView.vue`)。若要新增頁面，請在此資料夾建立一個新的 `.vue` 檔案。
+    *   **`src/router/index.js`**: 定義 URL 路徑與頁面元件的對應關係。新增頁面後，需要來這裡設定路由。
+
+*   **新增/修改共用元件:**
+    *   **`src/components/`**: 存放可重複使用的元件 (例如按鈕、導覽列、彈出視窗)。
+
+*   **管理應用程式狀態 (資料):**
+    *   **`src/store/`**: 使用 Pinia 管理全域狀態。例如，`user.js` 可能用來管理使用者登入資訊，`candidates.js` 用來管理候選人資料和投票邏輯。
+
+*   **主要進入點:**
+    *   **`src/main.js`**: Vue 應用程式的進入點，用於初始化 Vue、Router、Pinia 等。
+
+#### 後端 (Backend) - `vote_ai/server/`
+
+所有後端相關的程式碼都在 `server` 資料夾中。
+
+*   **API 邏輯與路由:**
+    *   **`server/index.js`**: 這是 Express 應用程式的進入點，包含了所有的 API 路由 (endpoints) 和主要的商業邏輯。例如，處理投票、使用者驗證、與區塊鏈互動的程式碼都在這裡。
+
+*   **資料庫:**
+    *   **`server/db.json`**: 專案使用 `lowdb`，這是一個基於 JSON 檔案的簡易資料庫。所有候選人資料、票數等都儲存在這個檔案中。
+
+#### 區塊鏈 (Blockchain) - `vote_ai/blockchain/`
+
+*   **智能合約:**
+    *   **`blockchain/contracts/Voting.sol`**: Solidity 智能合約檔案，定義了投票在鏈上的邏輯。
+*   **部署腳本:**
+    *   **`blockchain/scripts/deploy.js`**: 用於將智能合約部署到區塊鏈網路 (例如 Ganache) 的腳本。
+
 ## 5. 後續開發藍圖 (Roadmap)
 
 **🚀 第零階段：建立 Docker 開發環境 (已完成)**

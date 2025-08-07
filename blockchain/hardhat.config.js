@@ -10,7 +10,7 @@ module.exports = {
     ganache: {
       url: "http://127.0.0.1:8545", // Ganache 預設的 RPC URL
       accounts: [
-        "0xc79759ba8a6f2338eb8d70f2d5fb06c20fd4005ad6c78c207368b122fce9ac87"
+        "0xe9dbd00767eef0e147dce36d0c2ffffffb8ecba9edeaad63f5ce7aa738c2c3a6"  // 替換為你的 Ganache 帳戶私鑰   
       ]
     }
   }

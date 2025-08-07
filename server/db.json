@@ -3,12 +3,12 @@
     {
       "id": "candidate1",
       "name": "候選人 A",
-      "votes": 3
+      "votes": 4
     },
     {
       "id": "candidate2",
       "name": "候選人 B",
-      "votes": 3
+      "votes": 4
     },
     {
       "id": "candidate3",
