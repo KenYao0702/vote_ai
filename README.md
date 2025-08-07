@@ -182,6 +182,52 @@
 
 ### 6.1 環境準備與專案啟動
 
+***
+
+#### ❗ Windows 使用者特別注意事項 (WSL 設定)
+
+本專案的開發腳本和環境基於 Unix/Linux 系統。若您是 Windows 使用者，直接在 CMD 或 PowerShell 中執行可能會遇到錯誤 (例如：關於需要安裝 Linux 子系統的提示)。
+
+為了確保所有指令都能正常運作，強烈建議您透過 **WSL (Windows Subsystem for Linux)** 來進行開發。WSL 能讓您在 Windows 上無縫地運行一個 Linux 環境，是現代 Windows 開發的最佳實踐。
+
+**設定步驟如下：**
+
+**1. 安裝 WSL:**
+*   以系統管理員身分開啟 PowerShell 或 Windows 命令提示字元。
+*   執行以下指令來安裝 WSL 和預設的 Ubuntu 發行版：
+    ```powershell
+    wsl --install
+    ```
+*   安裝完成後，請重新啟動您的電腦。
+
+**2. 設定 Docker Desktop 與 WSL 整合:**
+*   確保您已安裝 [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)。
+*   開啟 Docker Desktop，進入 **Settings > Resources > WSL Integration**。
+*   **請確保您安裝的 Linux 發行版 (例如 `Ubuntu`) 的開關是開啟的**。這一步非常關鍵，它讓 Docker 能在 WSL 環境中運作。
+
+**3. 在 WSL 中設定專案:**
+*   從現在開始，**所有指令都應該在 WSL 的終端機中執行**。
+*   您可以從「開始」功能表找到並開啟 `Ubuntu` 應用程式。
+*   **在 WSL 中安裝開發工具 (Node.js & npm):**
+    ```bash
+    # 更新套件列表
+    sudo apt update
+    # 安裝 nvm (Node Version Manager)
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+    # 讓 nvm 指令生效 (或重開終端機)
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    # 安裝建議的 Node.js 版本
+    nvm install 20
+    ```
+*   **接下來，請在 WSL 終端機中，依照下面的「給組員的操作流程」繼續進行**，例如 `git clone`、設定 `.env` 檔案、啟動 Ganache 等。
+
+**4. 存取專案:**
+*   即使專案運行在 WSL 中，您依然可以從 Windows 的瀏覽器透過 `http://localhost:8080` (前端) 和 `http://localhost:3000` (後端) 來存取服務。
+
+***
+
+
 *   **目標：** 解決「在我電腦上可以跑，在你電腦上卻不行」的問題。透過容器化，確保每位組員都在完全相同的環境中進行開發與測試。
 *   **核心檔案：**
     *   `vote_ai/server/Dockerfile`: 用於建置後端服務的映像。
