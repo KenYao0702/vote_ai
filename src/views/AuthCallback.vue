@@ -24,16 +24,17 @@ export default {
       const name = params.get('name');
       const email = params.get('email');
       const photo = params.get('photo');
+      const redirectPath = params.get('redirect'); // 從 URL 參數讀取 redirect 路徑
 
       if (name && email) {
         const userData = { name, email, photo };
         user.value = userData;
         userStore.setUser(userData); // 將使用者資訊儲存到 user store
 
-        // 登入成功後，可以重定向到首頁或其他頁面
         setTimeout(() => {
-          router.push('/');
-        }, 2000); // 2秒後重定向
+          // 如果有重定向路徑，就跳轉過去，否則跳轉到首頁
+          router.push(redirectPath || '/');
+        }, 1000); // 恢復為 1 秒後重定向
       } else {
         error.value = '未收到使用者資訊。';
       }

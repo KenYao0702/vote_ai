@@ -3,8 +3,14 @@
     <header class="app-header">
       <h1>投票網站</h1>
       <nav>
-        <a v-if="!userStore.isLoggedIn" :href="backendAuthUrl" class="login-button">Login with Google</a>
+        <nav>
+        <!-- Login/Logout Button -->
+        <a v-if="!userStore.isLoggedIn" :href="backendAuthUrl" class="login-button">一般使用者登入</a>
         <button v-else @click="logout" class="logout-button">Logout</button>
+
+        <!-- Admin Portal Link -->
+        <router-link to="/admin" class="admin-link">管理員入口</router-link>
+      </nav>
       </nav>
     </header>
     <main>
@@ -18,12 +24,14 @@ import { useCandidatesStore } from './store/candidates';
 import { useUserStore } from './store/user';
 import { onMounted } from 'vue';
 import { computed } from 'vue';
+import { useRouter } from 'vue-router'; // 導入 useRouter
 
 export default {
   name: 'App',
   setup() {
     const candidatesStore = useCandidatesStore();
     const userStore = useUserStore();
+    const router = useRouter(); // 獲取 router 實例
 
     onMounted(() => {
       candidatesStore.fetchCandidates(); // 從後端獲取候選人數據
@@ -32,6 +40,7 @@ export default {
 
     const logout = () => {
       userStore.clearUser();
+      router.push('/'); // 登出後導向首頁
     };
 
     return {
@@ -69,6 +78,24 @@ body {
 
 .app-header nav {
   margin-top: 10px;
+  display: flex; /* 使用 Flexbox 來排版 */
+  justify-content: flex-end; /* 靠右對齊 */
+  align-items: center; /* 垂直置中 */
+  gap: 15px; /* 按鈕之間的間距 */
+}
+
+.admin-link {
+  background-color: #6c757d;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.admin-link:hover {
+  background-color: #5a6268;
 }
 
 .login-button {
@@ -80,6 +107,7 @@ body {
   text-decoration: none;
   font-weight: bold;
   transition: background-color 0.3s ease;
+  margin-right: 15px; /* 和管理員入口按鈕的間距 */
 }
 
 .login-button:hover {

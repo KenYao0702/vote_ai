@@ -35,9 +35,9 @@ export default {
   setup() {
     const candidatesStore = useCandidatesStore();
 
-    const handleVote = (candidateId) => {
-      candidatesStore.vote(candidateId);
-      alert(`感謝您的投票！`);
+    const handleVote = async (candidateId) => {
+      // The vote action now handles its own alerts for success, failure, or already voted.
+      await candidatesStore.vote(candidateId);
     };
 
     return {

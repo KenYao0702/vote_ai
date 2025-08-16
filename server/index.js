@@ -17,6 +17,11 @@ const port = process.env.PORT || 3000;
 app.use(cors({ origin: 'http://localhost:8080' }));
 app.use(express.json());
 
+// --- Admin Emails ---
+// In a real application, this should be stored in a database or a secure config file.
+const ADMIN_EMAILS = ['yayaken0702@gmail.com']; // TODO: Add your admin email here
+
+
 // LowDB setup
 const file = join(__dirname, 'db.json');
 const adapter = new JSONFile(file);
@@ -26,17 +31,44 @@ const db = new Low(adapter, { candidates: [] });
 async function initializeDb() {
   console.log('Attempting to initialize DB at:', file);
   await db.read();
-  console.log('db.data after read:', db.data);
+
+  // 無論如何，都確保 data 是一個物件
+  if (!db.data || typeof db.data !== 'object') {
+    db.data = {};
+  }
+
+  let needsWrite = false;
+
+  // 強制檢查 candidates 陣列
+  if (!Array.isArray(db.data.candidates)) {
+    db.data.candidates = [];
+    needsWrite = true;
+  }
+
+  // 強制檢查 votedUsers 陣列
+  if (!Array.isArray(db.data.votedUsers)) {
+    db.data.votedUsers = [];
+    needsWrite = true;
+  }
+
+  // 只有在 candidates 為空時，才加入預設資料
   if (db.data.candidates.length === 0) {
     db.data.candidates.push(
       { id: 'candidate1', name: '候選人 A', votes: 0 },
       { id: 'candidate2', name: '候選人 B', votes: 0 },
       { id: 'candidate3', name: '候選人 C', votes: 0 }
     );
+    console.log('Default candidates added.');
+    needsWrite = true;
+  }
+
+  // 如果有任何結構上的變更，或新增了預設資料，就執行寫入
+  if (needsWrite) {
+    console.log('Writing updates to db.json...');
     await db.write();
-    console.log('Database initialized with default candidates.');
+    console.log('db.json has been updated.');
   } else {
-    console.log('Database already exists and contains data.');
+    console.log('db.json is already up to date.');
   }
 }
 
@@ -95,24 +127,38 @@ app.get('/api/candidates', async (req, res) => {
 // API to vote for a candidate
 app.post('/api/vote/:candidateId', async (req, res) => {
   const { candidateId } = req.params;
+  const { userEmail } = req.body; // 從 request body 獲取 userEmail
+
+  if (!userEmail) {
+    return res.status(400).json({ message: 'User email is required to vote.' });
+  }
+
+  await db.read();
+
+  // 確保 votedUsers 陣列存在
+  if (!Array.isArray(db.data.votedUsers)) {
+    db.data.votedUsers = [];
+  }
+
+  // 檢查使用者是否已經投過票
+  if (db.data.votedUsers.includes(userEmail)) {
+    return res.status(403).json({ message: 'You have already voted.' });
+  }
 
   try {
     // 區塊鏈投票
-    // 注意：這裡的 candidateId 需要與智能合約中的索引匹配
-    // 我們的智能合約中，候選人 ID 是從 0 開始的索引
-    // 如果前端傳來的是 'candidate1', 'candidate2' 這樣的字串 ID，需要轉換
-    const contractCandidateId = parseInt(candidateId.replace('candidate', '')) - 1; // 假設前端 ID 是 'candidate1' -> 0
+    const contractCandidateId = parseInt(candidateId.replace('candidate', '')) - 1;
 
     const tx = await votingContract.vote(contractCandidateId);
-    await tx.wait(); // 等待交易被打包
+    await tx.wait();
     console.log(`Vote transaction sent: ${tx.hash}`);
 
-    // 更新 LowDB
-    await db.read();
+    // 更新 LowDB 中的票數
     const candidate = db.data.candidates.find(c => c.id === candidateId);
-
     if (candidate) {
       candidate.votes++;
+      // 將使用者加入已投票列表
+      db.data.votedUsers.push(userEmail);
       await db.write();
       res.json({ message: 'Vote recorded on blockchain and LowDB', candidate });
     } else {
@@ -124,8 +170,93 @@ app.post('/api/vote/:candidateId', async (req, res) => {
   }
 });
 
+// --- Auth APIs ---
+app.get('/api/auth/check-admin', (req, res) => {
+  const { email } = req.query;
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  // --- DEBUGGING LOGS ---
+  console.log(`[Admin Check] Received email to check: "${email}"`);
+  console.log(`[Admin Check] Admin list:`, ADMIN_EMAILS);
+  // --- END DEBUGGING ---
+
+  const isAdmin = ADMIN_EMAILS.includes(email);
+  
+  // --- DEBUGGING LOGS ---
+  console.log(`[Admin Check] Is user admin? ${isAdmin}`);
+  // --- END DEBUGGING ---
+
+  res.json({ isAdmin });
+});
+
+
+// --- Admin APIs ---
+
+// POST /api/admin/candidates - Add a new candidate
+app.post('/api/admin/candidates', async (req, res) => {
+  const { name } = req.body;
+  if (!name) {
+    return res.status(400).json({ message: 'Candidate name is required' });
+  }
+
+  await db.read();
+  const newCandidate = {
+    // Create a simple unique ID
+    id: `candidate${Date.now()}`,
+    name: name,
+    votes: 0
+  };
+  db.data.candidates.push(newCandidate);
+  await db.write();
+
+  res.status(201).json({ message: 'Candidate added successfully', candidate: newCandidate });
+});
+
+// PUT /api/admin/candidates/:id - Update a candidate's name and platform
+app.put('/api/admin/candidates/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, platform } = req.body; // 接收 platform 欄位
+
+  if (!name && !platform) {
+    return res.status(400).json({ message: 'Name or platform is required for update' });
+  }
+
+  await db.read();
+  const candidate = db.data.candidates.find(c => c.id === id);
+
+  if (candidate) {
+    if (name) candidate.name = name;
+    if (platform) candidate.platform = platform;
+    await db.write();
+    res.json({ message: 'Candidate updated successfully', candidate });
+  } else {
+    res.status(404).json({ message: 'Candidate not found' });
+  }
+});
+
+// DELETE /api/admin/candidates/:id - Delete a candidate
+app.delete('/api/admin/candidates/:id', async (req, res) => {
+  const { id } = req.params;
+
+  await db.read();
+  const initialLength = db.data.candidates.length;
+  db.data.candidates = db.data.candidates.filter(c => c.id !== id);
+
+  if (db.data.candidates.length < initialLength) {
+    await db.write();
+    res.json({ message: 'Candidate deleted successfully' });
+  } else {
+    res.status(404).json({ message: 'Candidate not found' });
+  }
+});
+
+
 // 1. Redirect to Google's consent screen
 app.get('/auth/google', (req, res) => {
+  const { state } = req.query; // Read the state from the query
+
   const scopes = [
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/userinfo.email',
@@ -134,6 +265,7 @@ app.get('/auth/google', (req, res) => {
   const url = oauth2Client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes,
+    state: state || '/', // Pass the state to Google. Default to '/' if not provided.
   });
 
   res.redirect(url);
@@ -141,7 +273,7 @@ app.get('/auth/google', (req, res) => {
 
 // 2. Handle the callback from Google
 app.get('/auth/google/callback', async (req, res) => {
-  const { code } = req.query;
+  const { code, state } = req.query; // Also get the state back
 
   try {
     const { tokens } = await oauth2Client.getToken(code);
@@ -153,10 +285,8 @@ app.get('/auth/google/callback', async (req, res) => {
       personFields: 'names,emailAddresses,photos',
     });
 
-    // Here, you would typically find or create a user in your database
-    // and create a session or JWT for them.
-    // For now, we'll just send back the user's profile.
-    const frontendRedirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:8080'}/auth/callback?name=${encodeURIComponent(data.names[0].displayName)}&email=${encodeURIComponent(data.emailAddresses[0].value)}&photo=${encodeURIComponent(data.photos[0].url)}`;
+    const redirectPath = state || '/';
+    const frontendRedirectUrl = `${process.env.FRONTEND_URL || 'http://localhost:8080'}/auth/callback?name=${encodeURIComponent(data.names[0].displayName)}&email=${encodeURIComponent(data.emailAddresses[0].value)}&photo=${encodeURIComponent(data.photos[0].url)}&redirect=${encodeURIComponent(redirectPath)}`;
     res.redirect(frontendRedirectUrl);
 
   } catch (error) {

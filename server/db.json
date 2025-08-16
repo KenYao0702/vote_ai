@@ -1,19 +1,26 @@
 {
   "candidates": [
     {
-      "id": "candidate1",
-      "name": "候選人 A",
-      "votes": 4
-    },
-    {
       "id": "candidate2",
-      "name": "候選人 B",
-      "votes": 4
+      "name": "菜中文",
+      "votes": 0,
+      "platform": "愛台灣"
     },
     {
       "id": "candidate3",
-      "name": "候選人 C",
-      "votes": 1
+      "name": "馬音酒",
+      "votes": 1,
+      "platform": "超愛台灣"
+    },
+    {
+      "id": "candidate1755258519955",
+      "name": "賴輕得",
+      "votes": 0,
+      "platform": "超超愛台灣"
     }
+  ],
+  "votedUsers": [
+    "pig55842668@gmail.com",
+    "yayaken8787@gmail.com"
   ]
 }
