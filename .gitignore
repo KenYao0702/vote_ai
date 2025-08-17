@@ -22,3 +22,10 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Local database
+server/db.json
+
+# Hardhat artifacts
+blockchain/artifacts
+blockchain/cache

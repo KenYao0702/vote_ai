@@ -28,7 +28,7 @@ contract Voting {
     // 投票函數
     function vote(uint256 _candidateId) public {
         // 檢查呼叫者是否已經投過票
-        // require(!voters[msg.sender], "You have already voted.");
+                require(!voters[msg.sender], "You have already voted.");
 
         // 檢查候選人 ID 是否有效
         require(_candidateId < candidates.length, "Invalid candidate ID.");

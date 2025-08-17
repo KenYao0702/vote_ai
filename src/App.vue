@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header class="app-header">
-      <h1>投票網站</h1>
+      <router-link to="/" class="header-title-link"><h1>投票網站</h1></router-link>
       <nav>
         <nav>
         <!-- Login/Logout Button -->
@@ -74,6 +74,13 @@ body {
 .app-header h1 {
   margin: 0;
   font-size: 1.8em;
+}
+
+.header-title-link,
+.header-title-link:hover,
+.header-title-link:visited {
+  color: inherit; /* 繼承父層的顏色 (白色) */
+  text-decoration: none; /* 移除底線 */
 }
 
 .app-header nav {
