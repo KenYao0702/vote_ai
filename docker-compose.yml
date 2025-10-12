@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  # 後端服務 (Backend Service)
+  backend:
+    build:
+      context: ./server  # Dockerfile 的路徑在 ./server 目錄下
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  # 將本地的 3000 port 映射到容器的 3000 port
+    environment:
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - REDIRECT_URI=${REDIRECT_URI}
+      - FRONTEND_URL=${FRONTEND_URL}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - BLOCKCHAIN_RPC_URL=http://host.docker.internal:8545
+    volumes:
+      - ./server:/usr/src/app
+      - ./blockchain:/usr/src/blockchain
+      - /usr/src/app/node_modules
+    env_file:
+      - ./.env # 從專案根目錄的 .env 檔案讀取環境變數
+
+  # 前端服務 (Frontend Service)
+  frontend:
+    build:
+      context: .  # Dockerfile 的路徑在當前目錄
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # 將本地的 8080 port 映射到容器的 80 port (Nginx 預設)
+    volumes:
+      # 將本地的前端程式碼掛載到容器內，以實現熱重載
+      - .:/app
+      # 排除 node_modules 目錄
+      - /app/node_modules
+    depends_on:
+      - backend # 確保後端服務會比前端服務先啟動
+
+volumes:
+  db_data:
