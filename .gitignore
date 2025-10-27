@@ -1,4 +1,3 @@
-
 # macOS
 .DS_Store
 
@@ -125,3 +124,5 @@ blockchain/artifacts
 blockchain/cache
 blockchain/deployment-info.json
 
+# Problematic images
+public/images/

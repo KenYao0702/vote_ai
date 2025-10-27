@@ -132,19 +132,24 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+body {
+  background-color: #f4f7f6;
+}
+
 .home-container {
+  font-family: 'Noto Sans TC', sans-serif;
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  max-width: 1400px;
+  gap: 30px;
+  padding: 30px;
+  max-width: 1500px;
   margin: auto;
 }
 
 .candidates-section, .chat-section {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 .candidates-section {
@@ -159,8 +164,10 @@ onUnmounted(() => {
 
 h2 {
   text-align: center;
-  color: #333;
-  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 700;
+  font-size: 1.8em;
+  margin-bottom: 25px;
 }
 
 .status-banner {
@@ -169,7 +176,7 @@ h2 {
   border-radius: 8px;
   text-align: center;
   font-size: 1.1em;
-  font-weight: bold;
+  font-weight: 500;
 }
 .info {
   background-color: #eef5ff;
@@ -185,120 +192,125 @@ h2 {
 }
 
 .candidate-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 15px;
+  border: 1px solid #ecf0f1;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .candidate-card:hover {
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  transform: translateY(-5px);
 }
 
 .card-header {
   display: flex;
-  align-items: flex-start; /* Align to top for better look with large image */
+  align-items: flex-start;
   gap: 20px;
   margin-bottom: 15px;
 }
 
 .avatar {
-  width: 120px;
-  height: 120px;
-  border-radius: 8px; /* Rounded square */
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
   object-fit: cover;
-  border: 2px solid #f0f0f0;
-  flex-shrink: 0; /* Prevent image from shrinking */
+  border: 3px solid #ecf0f1;
+  flex-shrink: 0;
 }
 
 .candidate-name {
   margin: 0;
-  font-size: 1.5em;
+  font-size: 1.6em;
+  font-weight: 700;
+  color: #34495e;
 }
 
 .media-container {
-  margin: 15px 0;
+  margin: 20px 0;
   text-align: center;
 }
 
 .candidate-video {
   width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 8px;
+  border-radius: 12px;
   border: none;
 }
 
 .platform {
-  color: #555;
-  line-height: 1.6;
+  color: #34495e;
+  line-height: 1.7;
   white-space: pre-wrap;
-  max-height: 120px; /* 限制最大高度 */
-  overflow-y: auto;   /* 超出則滾動 */
-  padding-right: 5px; /* 避免滾動條太貼近文字 */
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
 
 .vote-action {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
 .vote-button {
-  background-color: #28a745;
+  background-color: #1abc9c;
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 5px;
+  padding: 12px 24px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s;
-  min-width: 100px;
-  text-align: center;
+  transition: background-color 0.3s, transform 0.2s;
+  font-weight: 700;
+  font-size: 1em;
 }
 
 .vote-button:hover:not(:disabled) {
-  background-color: #218838;
+  background-color: #16a085;
+  transform: translateY(-2px);
 }
 
 .vote-button:disabled {
-  background-color: #6c757d;
+  background-color: #95a5a6;
   cursor: not-allowed;
 }
 
 /* Chat Section Styles */
 .chat-window {
   flex-grow: 1;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 15px;
+  border: 1px solid #ecf0f1;
+  border-radius: 12px;
+  padding: 20px;
   overflow-y: auto;
-  margin-bottom: 15px;
-  min-height: 300px;
-  max-height: 500px;
+  margin-bottom: 20px;
+  min-height: 350px;
+  max-height: 550px;
   display: flex;
   flex-direction: column;
 }
 
 .chat-message {
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  max-width: 80%;
-  line-height: 1.4;
+  padding: 12px 18px;
+  border-radius: 18px;
+  margin-bottom: 12px;
+  max-width: 85%;
+  line-height: 1.5;
 }
 
 .user-message {
-  background-color: #007bff;
+  background-color: #3498db;
   color: white;
   align-self: flex-end;
+  border-bottom-right-radius: 4px;
 }
 
 .ai-message {
-  background-color: #eef5ff;
+  background-color: #ecf0f1;
+  color: #2c3e50;
   align-self: flex-start;
-  max-width: 70%;
+  border-bottom-left-radius: 4px;
 }
 
 .chat-input {
@@ -307,28 +319,42 @@ h2 {
 
 .chat-input input {
   flex-grow: 1;
-  border: 1px solid #ccc;
-  border-radius: 5px 0 0 5px;
-  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px 0 0 8px;
+  padding: 12px;
   font-size: 1em;
+  transition: border-color 0.3s;
+}
+
+.chat-input input:focus {
+  outline: none;
+  border-color: #3498db;
 }
 
 .chat-input button {
-  background-color: #007bff;
+  background-color: #3498db;
   color: white;
   border: none;
-  padding: 0 20px;
-  border-radius: 0 5px 5px 0;
+  padding: 0 25px;
+  border-radius: 0 8px 8px 0;
   cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.3s;
+}
+
+.chat-input button:hover {
+  background-color: #2980b9;
 }
 
 /* RWD Media Query */
 @media (max-width: 992px) {
   .home-container {
     flex-direction: column;
+    padding: 15px;
+    gap: 15px;
   }
   .candidates-section, .chat-section {
-    flex: 1; /* 讓兩欄在垂直堆疊時寬度一致 */
+    flex: 1;
   }
 }
 </style>
