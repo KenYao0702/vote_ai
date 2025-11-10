@@ -75,9 +75,9 @@
 
 ---
 
-## 6. 操作流程 (v3.1 自動化版)
+## 6. 操作流程 (v3.2 修正版)
 
-得益於部署流程的自動化，現在的啟動步驟更為簡單。
+根據最新的開發環境，請遵循以下步驟以確保專案能順利啟動。
 
 ### 第零步：設定環境 (`.env`)
 
@@ -86,14 +86,20 @@
     *   `GOOGLE_CLIENT_ID` & `GOOGLE_CLIENT_SECRET`: 填入您在 Google Cloud Console 建立的 OAuth 2.0 憑證。
     *   `GEMINI_API_KEY`: 填入您在 Google Cloud Console 建立的 API 金鑰。
 
-### 第一步：啟動 Ganache
+### 第一步：啟動 Hardhat 本地鏈
 
-在一個**獨立的終端機**中，執行指令來啟動本地鏈。
-```bash
-ganache-cli
-```
-*   **重要**：讓這個終端機視窗保持開啟。
-*   啟動後，從輸出的 10 組 Private Keys 中，複製**第一個**私鑰。
+1.  打開一個**獨立的終端機**。
+2.  **進入 `blockchain` 子目錄**並**安裝其依賴套件**：
+    ```bash
+    cd vote_ai/blockchain
+    npm install
+    ```
+3.  在**同一個終端機**中，執行指令來啟動本地鏈：
+    ```bash
+    npx hardhat node
+    ```
+4.  **重要**：讓這個終端機視窗保持開啟。
+5.  啟動後，從輸出的 `Account #0` 中，複製其 **Private Key**。
 
 ### 第二步：設定老闆錢包
 
@@ -102,26 +108,29 @@ ganache-cli
 
 ### 第三步：編譯與部署合約
 
-打開**第二個新的終端機**，執行以下指令。腳本現在會**自動**將部署好的合約位址儲存起來。
-```bash
-# 進入 blockchain 目錄
-cd vote_ai/blockchain
+1.  打開**第二個新的終端機**。
+2.  **進入 `blockchain` 目錄**：
+    ```bash
+    cd vote_ai/blockchain
+    ```
+3.  執行以下指令來編譯與部署合約：
+    ```bash
+    # 編譯合約
+    npx hardhat compile
 
-# 編譯合約
-npx hardhat compile
-
-# 執行部署腳本
-node simple_deploy.js
-```
-*   部署成功後，您會看到新的合約位址被印出，並已自動儲存。
+    # 執行部署腳本
+    node simple_deploy.js
+    ```
+4.  部署成功後，您會看到新的合約位址被印出，並已自動儲存。
 
 ### 第四步：啟動應用程式
 
-打開**第三個新的終端機**，在專案根目錄 (`vote_ai/`) 下，使用 Docker Compose 啟動所有服務。後端服務會**自動讀取**最新的合約位址。
-```bash
-docker-compose up --build
-```
-*   等待日誌穩定後，在瀏覽器中打開 `http://localhost:8080` 即可開始使用。
+1.  打開**第三個新的終端機**。
+2.  在專案根目錄 (`vote_ai/`) 下，使用 Docker Compose 啟動所有服務。後端服務會**自動讀取**最新的合約位址。
+    ```bash
+    docker-compose up --build
+    ```
+3.  等待日誌穩定後，在瀏覽器中打開 `http://localhost:8080` 即可開始使用。
 
 ---
 
