@@ -7,7 +7,7 @@
         投票尚未開始，請等候管理員開啟。
       </div>
       <div v-if="candidatesStore.isVotingRunning" class="status-banner running">
-        投票進行中！剩餘時間：<strong>{{ remainingTime }}</strong>
+        投票進行中！剩餘時間：<strong>{{ candidatesStore.remainingTime }}</strong>
       </div>
       <div v-if="candidatesStore.isVotingEnded" class="status-banner success">
         投票已結束，感謝您的參與！請至結果頁面查看票數。
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useCandidatesStore } from '../store/candidates';
 import { useAiChatStore } from '../store/aiChat';
 import { marked } from 'marked';
@@ -86,48 +86,9 @@ const handleKeyDown = (event) => {
   sendMessage();
 };
 
-const remainingTime = ref('計算中...');
-let timerInterval = null;
-
-const updateRemainingTime = () => {
-  if (candidatesStore.isVotingRunning && candidatesStore.votingEndTime > 0) {
-    const now = Math.floor(Date.now() / 1000);
-    const secondsLeft = candidatesStore.votingEndTime - now;
-
-    if (secondsLeft <= 0) {
-      remainingTime.value = '00:00:00';
-      candidatesStore.fetchElectionStatus();
-      return;
-    }
-
-    const hours = Math.floor(secondsLeft / 3600);
-    const minutes = Math.floor((secondsLeft % 3600) / 60);
-    const seconds = secondsLeft % 60;
-
-    remainingTime.value = 
-      `${String(hours).padStart(2, '0')}:` +
-      `${String(minutes).padStart(2, '0')}:` +
-      `${String(seconds).padStart(2, '0')}`;
-  } else {
-    remainingTime.value = 'N/A';
-  }
-};
-
-onMounted(async () => {
-  await Promise.all([
-    candidatesStore.fetchCandidates(),
-    candidatesStore.fetchElectionStatus(),
-    candidatesStore.fetchElectionDetails()
-  ]);
-  
-  updateRemainingTime();
-  timerInterval = setInterval(updateRemainingTime, 1000);
-});
-
-onUnmounted(() => {
-  if (timerInterval) {
-    clearInterval(timerInterval);
-  }
+onMounted(() => {
+  candidatesStore.fetchCandidates();
+  candidatesStore.fetchElectionStatus();
 });
 </script>
 

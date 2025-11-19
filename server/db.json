@@ -24,8 +24,12 @@
   ],
   "users": {
     "yayaken0702@gmail.com": {
-      "address": "0xD033Cd1A75D58C41705372E840381E18B35A05Db",
-      "privateKey": "0x2ed8b6f1f356b1d868eba02e61b1c4a435b6c90ca34fb2a42d588d4410675676"
+      "address": "0xAFf86DF6D288789302B3C3c5d29FeCB705fb7686",
+      "privateKey": "0x84d75d02068af00a633434e1c5b7f3572528a57bff2483594e29ec04e64ee434"
+    },
+    "pig55842668@gmail.com": {
+      "address": "0xA504b077Dbd5e16ad7B676E4D587a673F8260815",
+      "privateKey": "0x263c0201c3b9e80180ccb3832aed2c492804e01599d4cfea79ca1351c6f7a7dc"
     }
   },
   "votedUsers": []

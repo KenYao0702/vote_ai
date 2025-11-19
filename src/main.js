@@ -10,7 +10,7 @@ const pinia = createPinia()
 app.use(pinia)
 
 // 在掛載應用前，從 localStorage 初始化使用者狀態
-const userStore = useUserStore()
+const userStore = useUserStore(pinia)
 userStore.initializeFromStorage()
 
 app.use(router)

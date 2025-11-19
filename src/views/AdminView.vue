@@ -2,26 +2,33 @@
   <div class="admin-container">
     <h1>選舉管理面板</h1>
 
+    <div class="control-panel" v-if="candidatesStore.isVotingNotStarted">
+      <h2>設定投票時間</h2>
+      <div class="form-group">
+        <label>投票持續時間:</label>
+        <div class="time-inputs">
+          <input type="number" v-model.number="durationHours" min="0" placeholder="小時" />
+          <span>小時</span>
+          <input type="number" v-model.number="durationMinutes" min="0" max="59" placeholder="分鐘" />
+          <span>分鐘</span>
+        </div>
+      </div>
+      <button @click="startElection" :disabled="totalDurationInMinutes <= 0">開始投票</button>
+    </div>
+
     <div class="status-panel">
       <h2>當前選舉狀態</h2>
       <p :class="statusClass">{{ formattedStatus }}</p>
+      <div v-if="candidatesStore.isVotingRunning && candidatesStore.remainingTime" class="remaining-time">
+        剩餘時間: {{ candidatesStore.remainingTime }}
+      </div>
+    </div>
+
+    <div class="result-button-container" v-if="candidatesStore.isVotingEnded">
+      <button @click="goToResultPage" class="result-button">投票結果</button>
     </div>
 
     <div class="control-panel">
-      <div v-if="candidatesStore.isVotingNotStarted">
-        <h2>開始投票</h2>
-        <div class="form-group">
-          <label>投票持續時間:</label>
-          <div class="time-inputs">
-            <input type="number" v-model.number="durationHours" min="0" placeholder="小時" />
-            <span>小時</span>
-            <input type="number" v-model.number="durationMinutes" min="0" max="59" placeholder="分鐘" />
-            <span>分鐘</span>
-          </div>
-        </div>
-        <button @click="startElection" :disabled="totalDurationInMinutes <= 0">開始投票</button>
-      </div>
-
       <div v-if="candidatesStore.isVotingRunning">
         <h2>結束投票</h2>
         <p>投票正在進行中。</p>
@@ -39,9 +46,11 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useCandidatesStore } from '../store/candidates';
 
 const candidatesStore = useCandidatesStore();
+const router = useRouter();
 const durationHours = ref(1);
 const durationMinutes = ref(0);
 
@@ -82,6 +91,10 @@ function endElection() {
   }
 }
 
+function goToResultPage() {
+  router.push('/result');
+}
+
 onMounted(() => {
   candidatesStore.fetchElectionStatus();
 });
@@ -112,6 +125,13 @@ h1, h2 {
   font-weight: bold;
 }
 
+.remaining-time {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #dc3545;
+}
+
 .status-not-started {
   background-color: #fffbe6;
   color: #b47700;
@@ -135,6 +155,7 @@ h1, h2 {
   background-color: #fff;
   border-radius: 8px;
   border: 1px solid #eee;
+  margin-bottom: 1rem;
 }
 
 .form-group {
@@ -151,6 +172,7 @@ h1, h2 {
   display: flex;
   align-items: center;
   gap: 10px;
+  justify-content: center;
 }
 
 .time-inputs input {
@@ -194,6 +216,22 @@ button:hover:not(:disabled) {
 
 .end-button:hover {
   background-color: #c82333;
+}
+
+.result-button-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.result-button {
+  width: auto;
+  padding: 0.8rem 2rem;
+  font-size: 1.2em;
+  background-color: #28a745;
+}
+
+.result-button:hover {
+  background-color: #218838;
 }
 
 .warning {

@@ -8,15 +8,22 @@
         <p>AI 正在思考中...</p>
       </div>
     </div>
-    <div class="input-area">
-      <input v-model="newMessage" @keyup.enter="sendMessage" placeholder="在這裡輸入您想問的問題..." :disabled="chatStore.isLoading" />
-      <button @click="sendMessage" :disabled="chatStore.isLoading">傳送</button>
-    </div>
+    <form class="input-area" @submit.prevent="sendMessage">
+      <textarea
+        v-model="newMessage"
+        @keydown.enter="handleEnter"
+        placeholder="在這裡輸入您想問的問題..."
+        :disabled="chatStore.isLoading"
+        rows="1"
+        ref="textarea"
+      ></textarea>
+      <button type="submit" :disabled="chatStore.isLoading">傳送</button>
+    </form>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, nextTick, watch } from 'vue';
 import { useAiChatStore } from '@/store/aiChat';
 
 export default {
@@ -24,6 +31,7 @@ export default {
   setup() {
     const chatStore = useAiChatStore();
     const newMessage = ref('');
+    const textarea = ref(null);
 
     const sendMessage = () => {
       if (newMessage.value.trim()) {
@@ -32,10 +40,30 @@ export default {
       }
     };
 
+    const handleEnter = (e) => {
+      if (e.isComposing) {
+        return;
+      }
+      if (!e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    };
+
+    watch(newMessage, async () => {
+      await nextTick();
+      if (textarea.value) {
+        textarea.value.style.height = 'auto';
+        textarea.value.style.height = `${textarea.value.scrollHeight}px`;
+      }
+    });
+
     return {
       chatStore,
       newMessage,
       sendMessage,
+      handleEnter,
+      textarea,
     };
   },
 };
@@ -85,11 +113,15 @@ export default {
   display: flex;
 }
 
-.input-area input {
+.input-area textarea {
   flex-grow: 1;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  resize: none;
+  overflow-y: auto;
+  max-height: 100px;
+  transition: height 0.2s ease;
 }
 
 .input-area button {
